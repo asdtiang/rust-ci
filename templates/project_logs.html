@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-end">
+    <div>
+        <h2 class="text-2xl font-bold text-white mb-2">{{ crate::i18n::t("logs_title", lang) }}: <span class="text-emerald-400">{{ project.name }}</span></h2>
+        <p class="text-sm text-slate-400">{{ crate::i18n::t("logs_dir", lang) }}: <code class="bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700">{{ project.log_dir }}</code></p>
+    </div>
+    <div>
+        <a href="/projects" class="inline-flex items-center px-4 py-2 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors">
+            &larr; {{ crate::i18n::t("btn_back_proj", lang) }}
+        </a>
+    </div>
+</div>
+
+<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-700">
+            <thead class="bg-slate-800/50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{{ crate::i18n::t("col_filename", lang) }}</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{{ crate::i18n::t("col_size", lang) }}</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">{{ crate::i18n::t("col_action", lang) }}</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700 bg-slate-800">
+                {% for file in log_files %}
+                <tr class="hover:bg-slate-700/50 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-200">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-slate-500 mr-2 group-hover:text-emerald-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            {{ file.name }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{{ file.size }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/projects/{{ project.id }}/logs/{{ file.name }}" class="text-emerald-400 hover:text-emerald-300 transition-colors">{{ crate::i18n::t("btn_tailf", lang) }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+                {% if log_files.len() == 0 %}
+                <tr>
+                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">
+                        {{ crate::i18n::t("logs_no_files", lang) }}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

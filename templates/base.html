@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rust CI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .log-container {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.2);
+            border: 1px solid #1e293b;
+        }
+        
+        /* Modern scrollbar for logs */
+        .log-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .log-container::-webkit-scrollbar-track {
+            background: #0f172a; 
+            border-radius: 4px;
+        }
+        .log-container::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-screen flex flex-col font-sans selection:bg-blue-500/30">
+    <nav class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-6">
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 select-none">
+                        Rust CI
+                    </span>
+                    {% if is_logged_in %}
+                    <a href="/" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ crate::i18n::t("nav_dashboard", lang) }}</a>
+                    <a href="/projects" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ crate::i18n::t("nav_projects", lang) }}</a>
+                    <a href="/users" class="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">{{ crate::i18n::t("nav_users", lang) }}</a>
+                    {% endif %}
+                </div>
+                <div class="flex items-center space-x-4">
+                    <form action="/lang" method="post" class="flex items-center m-0">
+                        <input type="hidden" name="next" id="lang-next-url" value="/">
+                        <select name="lang" onchange="this.form.submit()" class="bg-slate-800 text-slate-300 text-sm rounded-md border border-slate-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow appearance-none cursor-pointer">
+                            <option value="zh" {% if lang == "zh" %}selected{% endif %}>中文</option>
+                            <option value="en" {% if lang == "en" %}selected{% endif %}>English</option>
+                        </select>
+                    </form>
+                    {% if is_logged_in %}
+                    <form action="/logout" method="post" class="m-0">
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-1.5 rounded-md text-sm font-medium border border-slate-700 transition-all shadow-sm hover:shadow active:scale-95">{{ crate::i18n::t("nav_logout", lang) }}</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Area: flex-1 allows it to fill the screen, making full height log viewers possible -->
+    <main class="flex-1 w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% if let Some(msg) = error_msg %}
+        <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+            <span class="block sm:inline">{{ msg }}</span>
+        </div>
+        {% endif %}
+        {% if let Some(msg) = success_msg %}
+        <div class="bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            <span class="block sm:inline">{{ msg }}</span>
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Set the current path for the language switcher
+        document.getElementById('lang-next-url').value = window.location.pathname;
+    </script>
+</body>
+</html>

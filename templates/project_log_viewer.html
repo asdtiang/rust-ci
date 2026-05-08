@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-col h-full flex-1">
+    <div class="mb-4 flex justify-between items-end flex-none">
+        <div>
+            <h2 class="text-2xl font-bold text-white mb-1">
+                {{ crate::i18n::t("logs_title", lang) }}: <span class="text-emerald-400">{{ filename }}</span>
+            </h2>
+            <p class="text-sm text-slate-400">Project: <span class="text-slate-300 font-medium">{{ project.name }}</span></p>
+        </div>
+        <div>
+            <a href="/projects/{{ project.id }}/logs" class="inline-flex items-center px-4 py-2 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors">
+                &larr; {{ crate::i18n::t("btn_back_logs", lang) }}
+            </a>
+        </div>
+    </div>
+    
+    <div id="log-viewer" class="log-container flex-1 w-full min-h-[500px] text-sm md:text-base leading-relaxed">{{ crate::i18n::t("log_loading", lang) }}</div>
+</div>
+
+<script>
+    const projectId = {{ project.id }};
+    const filename = "{{ filename }}";
+    let offset = 0;
+    const logViewer = document.getElementById('log-viewer');
+
+    async function fetchLogs() {
+        try {
+            const response = await fetch(`/api/projects/${projectId}/logs/${filename}?offset=${offset}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (offset === 0) {
+                    logViewer.textContent = data.text; // initial clear
+                } else {
+                    logViewer.textContent += data.text;
+                }
+                
+                if (data.text.length > 0) {
+                    logViewer.scrollTop = logViewer.scrollHeight;
+                }
+
+                offset = data.new_offset;
+            }
+        } catch (e) {
+            console.error('Error fetching logs:', e);
+        }
+
+        setTimeout(fetchLogs, 1000);
+    }
+
+    fetchLogs();
+</script>
+{% endblock %}

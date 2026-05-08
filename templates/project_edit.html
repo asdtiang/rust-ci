@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex-1 flex flex-col pt-8 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-2xl">
+        <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-700 bg-slate-800/50">
+                <h3 class="text-lg font-medium text-white">{{ crate::i18n::t("proj_edit_title", lang) }}: <span class="text-emerald-400">{{ project.name }}</span></h3>
+            </div>
+            <div class="p-6">
+                <form action="/projects/{{ project.id }}/edit" method="POST" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-300 mb-1">{{ crate::i18n::t("proj_name", lang) }}</label>
+                        <input type="text" id="name" name="name" value="{{ project.name }}" required class="appearance-none block w-full px-4 py-2.5 border border-slate-600 rounded-lg shadow-sm bg-slate-900/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                    </div>
+                    <div>
+                        <label for="script_path" class="block text-sm font-medium text-slate-300 mb-1">{{ crate::i18n::t("proj_script", lang) }}</label>
+                        <input type="text" id="script_path" name="script_path" value="{{ project.script_path }}" required class="appearance-none block w-full px-4 py-2.5 border border-slate-600 rounded-lg shadow-sm bg-slate-900/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                    </div>
+                    <div>
+                        <label for="log_dir" class="block text-sm font-medium text-slate-300 mb-1">{{ crate::i18n::t("proj_log_dir", lang) }}</label>
+                        <input type="text" id="log_dir" name="log_dir" value="{{ project.log_dir }}" required class="appearance-none block w-full px-4 py-2.5 border border-slate-600 rounded-lg shadow-sm bg-slate-900/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                    </div>
+                    <div class="pt-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button type="submit" class="w-full flex-1 flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-slate-800 transition-colors">
+                            {{ crate::i18n::t("btn_save", lang) }}
+                        </button>
+                        <a href="/projects" class="w-full flex-1 flex justify-center py-2.5 px-4 border border-slate-600 rounded-lg shadow-sm text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-800 transition-colors">
+                            {{ crate::i18n::t("btn_cancel", lang) }}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
