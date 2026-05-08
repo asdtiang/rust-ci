@@ -23,3 +23,17 @@ dotenvy = "0.15"
 tokio-util = { version = "0.7", features = ["io"] }
 tower-http = { version = "0.5", features = ["fs", "trace"] }
 time = "0.3"
+
+[package.metadata.generate-rpm]
+name = "rust-ci"
+summary = "A lightweight self-hosted CI system built with Rust"
+
+[[package.metadata.generate-rpm.assets]]
+source = "target/x86_64-unknown-linux-musl/release/rust_ci"
+dest = "/usr/bin/rust-ci"
+mode = "0755"
+
+[[package.metadata.generate-rpm.assets]]
+source = "rust-ci.service"
+dest = "/usr/lib/systemd/system/rust-ci.service"
+mode = "0644"
