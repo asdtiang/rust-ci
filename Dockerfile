@@ -1,4 +1,4 @@
-FROM docker.1ms.run/rust:1.87-slim-bookworm
+FROM rust:1.87
 
 WORKDIR /app
 COPY . /app
