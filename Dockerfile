@@ -1,4 +1,4 @@
-FROM rust:slim-bookworm AS builder
+FROM rust:1.87-slim-bookworm AS builder
 
 WORKDIR /usr/src/rust_ci
 COPY . .
