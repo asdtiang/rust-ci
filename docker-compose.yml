@@ -13,15 +13,3 @@ services:
       - ./templates:/app/templates:ro
     command: ["/data/rust_ci"]
     restart: unless-stopped
-
-  nginx:
-    image: nginx:1.30.0
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx_conf:/etc/nginx/conf.d/
-    depends_on:
-      - app
-    restart: unless-stopped
