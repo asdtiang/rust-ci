@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rust_ci
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=sqlite:///data/rust_ci.db
+      - RUST_LOG=debug
+      - PORT=3000
+    volumes:
+      - ./data:/data

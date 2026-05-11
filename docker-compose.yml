@@ -1,17 +1,17 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: rust:1.87
     container_name: rust_ci
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=sqlite://data/app.db
+      - DATABASE_URL=sqlite:///data/rust_ci.db
       - RUST_LOG=debug
       - PORT=3000
     volumes:
       - ./data:/data
+      - ./templates:/app/templates:ro
+    command: ["/data/rust_ci"]
     restart: unless-stopped
 
   nginx:
